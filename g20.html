@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Committee | HIS Global Conclave</title>
+<style>
+  :root{--bg:#030303;--ink:#f4f1ec;--sand:#b9a48c;--dim:#8a7b6a;--line:rgba(185,164,140,.4);--gold:#e4b783;--blue:#1b9be0;
+    --mono:"Consolas","Courier New",monospace;--grid:rgba(255,255,255,.035)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;color:var(--ink);font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/100% 120px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/120px 100%,
+      radial-gradient(ellipse at 50% 40%,rgba(60,50,35,.25),transparent 65%),var(--bg);overflow-x:hidden}
+  .label{font:12px var(--mono);letter-spacing:.3em;color:var(--sand);text-transform:uppercase}
+  .corner{position:fixed;width:26px;height:26px;border:1px solid rgba(185,164,140,.35);pointer-events:none}
+  .corner.tr{top:44px;right:34px}.corner.bl{bottom:18px;left:18px}.corner.br{bottom:18px;right:34px}
+
+  .page{display:grid;grid-template-columns:minmax(200px,1fr) minmax(300px,2fr) minmax(200px,1fr);gap:32px;padding:44px 40px 70px;max-width:1280px;margin:0 auto}
+  .col{display:flex;flex-direction:column}
+  .center{align-items:center;text-align:center}
+
+  .back{align-self:flex-start;display:inline-flex;gap:12px;align-items:center;padding:10px 16px;border:1px solid var(--line);border-radius:4px;
+    font:12px var(--mono);letter-spacing:.25em;color:var(--sand);text-decoration:none;text-transform:uppercase;transition:background .2s,color .2s}
+  .back:hover,.back:focus-visible{background:var(--sand);color:#050505;outline:none}
+
+  .emblem{width:136px;height:136px;margin:48px auto 0;border-radius:50%;padding:3px;border:2px solid #d9c6ad;background:#06121c;position:relative;
+    box-shadow:0 0 0 3px #000,0 0 28px rgba(228,183,131,.18)}
+  .emblem svg,.emblem img{width:100%;height:100%;display:block;border-radius:50%}
+  .emblem img{position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);object-fit:contain;padding:12%;background:radial-gradient(circle at 50% 30%,#fffdf8,#e6ddcf)}
+  .cname{margin:26px 0 0;text-align:center}
+  .full{margin-top:8px;text-align:center;font-weight:300;font-size:.9rem;color:var(--dim)}
+
+  .agenda{margin-top:56px}
+  .agenda .label{font-size:11px;letter-spacing:.25em;color:var(--dim)}
+  .topic{margin-top:22px;font-size:.84rem;line-height:1.55;font-weight:300}
+  .topic b{display:block;font-weight:400;color:var(--ink)}
+
+  .viewer{position:relative;width:min(100%,340px);height:470px;margin-top:26px;background:#141414;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+  .viewer p{padding:24px;font-size:.82rem;line-height:1.6;color:var(--dim);font-weight:300}
+  .viewer iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#2b2b2b}
+  .open{position:absolute;top:8px;right:8px;z-index:2;width:30px;height:30px;display:grid;place-items:center;background:rgba(0,0,0,.65);color:#fff;border-radius:4px;text-decoration:none}
+  .open svg{width:16px;height:16px}
+  .cta{margin-top:34px;display:inline-block;padding:11px 28px;border:1px solid rgba(185,164,140,.45);border-radius:999px;font:12px var(--mono);letter-spacing:.22em;
+    text-transform:uppercase;text-decoration:none;color:var(--gold);background:rgba(255,255,255,.03);transition:background .2s,color .2s}
+  .cta:hover,.cta:focus-visible{background:var(--gold);color:#050505;outline:none}
+
+  .board{display:flex;flex-direction:column;gap:30px;margin-top:34px;align-items:flex-start}
+  .member{width:134px;text-align:center}
+  .photo{position:relative;width:134px;height:134px;border-radius:6px;overflow:hidden;background:#101820;border:1px solid rgba(185,164,140,.25);transition:transform .3s,box-shadow .3s}
+  .photo::after{content:"";position:absolute;top:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue)}
+  .member:hover .photo{transform:translateY(-4px);box-shadow:0 10px 26px rgba(27,155,224,.2)}
+  .photo svg{position:absolute;inset:0;width:100%;height:100%}
+  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .role{margin-top:12px;font-size:.78rem;font-weight:600}
+
+  .switch{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:36px}
+  .switch a{padding:6px 12px;border:1px solid rgba(185,164,140,.25);border-radius:999px;font:11px var(--mono);letter-spacing:.15em;color:var(--dim);text-decoration:none;transition:all .2s}
+  .switch a:hover,.switch a.on{color:#050505;background:var(--sand);border-color:var(--sand)}
+
+  @media (prefers-reduced-motion:no-preference){.col{animation:in .7s cubic-bezier(.2,.8,.3,1) both}.col:nth-child(2){animation-delay:.1s}.col:nth-child(3){animation-delay:.2s}
+    @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}}
+  @media (max-width:900px){.page{grid-template-columns:1fr;padding:24px 20px 60px}.col{align-items:center}.back{align-self:flex-start}
+    .agenda{margin-top:34px;width:100%;max-width:340px}.board{flex-direction:row;flex-wrap:wrap;justify-content:center}.corner{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="s-bg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/></symbol>
+    <symbol id="ic-who" viewBox="0 0 100 100"><use href="#s-bg"/><g fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M42 24h16v18h18v16H58v18H42V58H24V42h18z"/><path d="M24 50h12l5-9 8 18 5-9h22" stroke="#6fc3f5" stroke-width="2.2"/></g></symbol>
+    <symbol id="ic-disec" viewBox="0 0 100 100"><use href="#s-bg"/><g fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M50 16L80 28V52C80 70 66 80 50 86 34 80 20 70 20 52V28Z"/><path d="M50 34v34M50 48c-8-2-12-8-12-14 8 2 12 6 12 14M50 58c8-2 12-8 12-14-8 2-12 6-12 14" stroke-width="2.4"/></g></symbol>
+    <symbol id="ic-unhrc" viewBox="0 0 100 100"><use href="#s-bg"/><g fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="8"/><path d="M26 38l24 10 24-10M50 48v18M50 66l-13 18M50 66l13 18"/></g></symbol>
+    <symbol id="ic-tnla" viewBox="0 0 100 100"><use href="#s-bg"/><g fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 80h64M24 80V58h52v22M32 58c0-14 8-24 18-24s18 10 18 24M50 34v-10M38 80V64M50 80V64M62 80V64"/></g></symbol>
+    <symbol id="ic-unsc" viewBox="0 0 100 100"><use href="#s-bg"/><g fill="none" stroke="#1b9be0" stroke-width="3"><circle cx="50" cy="50" r="15"/></g><g fill="#1b9be0"><circle cx="80" cy="50" r="3.4"/><circle cx="71.2" cy="71.2" r="3.4"/><circle cx="50" cy="80" r="3.4"/><circle cx="28.8" cy="71.2" r="3.4"/><circle cx="20" cy="50" r="3.4"/><circle cx="28.8" cy="28.8" r="3.4"/><circle cx="50" cy="20" r="3.4"/><circle cx="71.2" cy="28.8" r="3.4"/></g></symbol>
+    <symbol id="ic-ecosoc" viewBox="0 0 100 100"><use href="#s-bg"/><g fill="none" stroke="#1b9be0" stroke-linecap="round" stroke-linejoin="round"><path d="M26 78V60M40 78V48M54 78V56M68 78V38" stroke-width="5"/><path d="M22 44c14-2 26-12 34-26M44 18h12v12" stroke="#6fc3f5" stroke-width="2.4"/></g></symbol>
+    <symbol id="ic-g20" viewBox="0 0 100 100"><use href="#s-bg"/><text x="50" y="58" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="26" fill="#1b9be0">G20</text></symbol>
+    <symbol id="person" viewBox="0 0 100 100"><rect width="100" height="100" fill="#101820"/><circle cx="50" cy="38" r="15" fill="#1d3447"/><path d="M18 100c0-22 14-34 32-34s32 12 32 34z" fill="#1d3447"/></symbol>
+  </defs>
+</svg>
+
+<div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+<main class="page">
+  <aside class="col">
+    <a class="back" href="index.html"><span aria-hidden="true">←</span> Go back</a>
+    <div class="emblem" id="emblem"></div>
+    <div class="label cname" id="cname"></div>
+    <p class="full" id="full"></p>
+    <section class="agenda">
+      <div class="label">Agenda</div>
+      <div id="agenda"></div>
+    </section>
+  </aside>
+
+  <section class="col center">
+    <div class="label">Background Guide</div>
+    <div class="viewer">
+      <p id="note"></p>
+      <iframe id="pdf" title="Background guide"></iframe>
+      <a class="open" id="openpdf" target="_blank" rel="noopener" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+    </div>
+    <a class="cta" id="dl" download>Download background guide</a>
+    <nav class="switch" id="switch" aria-label="Committees"></nav>
+  </section>
+
+  <aside class="col">
+    <div class="label">Executive<br>Board</div>
+    <div class="board" id="board"></div>
+  </aside>
+</main>
+
+<script>
+var C={
+  who:{n:"WHO",f:"World Health Organization"},
+  unsc:{n:"UNSC",f:"United Nations Security Council"},
+  ecosoc:{n:"ECOSOC",f:"Economic and Social Council"},
+  disec:{n:"DISEC",f:"Disarmament and International Security Committee"},
+  unhrc:{n:"UNHRC",f:"United Nations Human Rights Council"},
+  tnla:{n:"TNLA",f:"Tamil Nadu Legislative Assembly"},
+  g20:{n:"G20",f:"Group of Twenty"}
+};
+var ROLES=["Chairperson","Vice-Chairperson"];
+function nx(i){var l=(i.dataset.alt||"").split("|").filter(Boolean);if(l.length){i.src=l.shift();i.dataset.alt=l.join("|")}else i.remove()}
+function $(id){return document.getElementById(id)}
+function render(){
+  var k=(location.hash||"#g20").slice(1).toLowerCase();if(!C[k])k="g20";
+  var c=C[k];
+  document.title=c.n+" | HIS Global Conclave";
+  $("emblem").innerHTML='<svg><use href="#ic-'+k+'"/></svg><img src="images/'+k+'.png" data-alt="'+k+'.png|'+k.toUpperCase()+'.png" alt="'+c.n+' logo" onerror="nx(this)">';
+  $("cname").textContent=c.n; $("full").textContent=c.f;
+  $("agenda").innerHTML=[1,2].map(function(i){return '<p class="topic"><b>Topic '+i+':</b>Add the agenda for '+c.n+' here.</p>'}).join("");
+  var pdf="guides/"+k+".pdf";
+  $("pdf").src=pdf+"#toolbar=0&navpanes=0"; $("openpdf").href=pdf; $("dl").href=pdf;
+  $("note").textContent="Add your background guide at "+pdf+" and it will show here.";
+  $("board").innerHTML=ROLES.map(function(r,i){
+    return '<div class="member"><div class="photo"><svg><use href="#person"/></svg><img src="board/'+k+'-'+(i+1)+'.jpg" alt="'+r+'" onerror="this.remove()"></div><div class="role">'+r+'</div></div>'
+  }).join("");
+  $("switch").innerHTML=Object.keys(C).map(function(x){return '<a href="#'+x+'"'+(x===k?' class="on"':'')+'>'+C[x].n+'</a>'}).join("");
+}
+window.addEventListener("hashchange",render);render();
+</script>
+</body>
+</html>

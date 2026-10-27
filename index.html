@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HIS Global Conclave Edition 3 | Model United Nations</title>
+<style>
+  :root{
+    --bg:#030303; --ink:#f4f1ec; --sand:#b9a48c; --sand-dim:#8a7b6a;
+    --line:rgba(185,164,140,.55); --grid:rgba(255,255,255,.035);
+    --blue:#1b9be0; --emb:clamp(64px,7.8vw,96px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);min-height:100%}
+  body{font-family:"Segoe UI Light","Segoe UI","Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
+  .stage{
+    position:relative;width:100%;min-height:100vh;min-height:max(100vh,620px);
+    background:
+      radial-gradient(ellipse at 50% 55%,rgba(60,50,35,.28),transparent 60%),
+      linear-gradient(var(--grid) 1px,transparent 1px) 0 0/100% 120px,
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/120px 100%,
+      var(--bg);
+    overflow:hidden;
+  }
+  .circuit{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .circuit path{fill:none;stroke:var(--line);stroke-width:1;vector-effect:non-scaling-stroke}
+  .corner{position:absolute;top:24px;width:40px;height:40px;border:1px solid rgba(185,164,140,.35)}
+  .corner.l{left:26px}.corner.r{right:26px}
+  .corner i{position:absolute;top:3px;width:7px;height:7px;background:#6d6458}
+  .corner.l{display:none}
+  .back{position:absolute;top:24px;left:26px;z-index:4;display:inline-flex;gap:10px;align-items:center;padding:10px 16px;border:1px solid var(--line);border-radius:4px;
+    font:12px "Consolas","Courier New",monospace;letter-spacing:.25em;color:var(--sand);text-decoration:none;text-transform:uppercase;background:rgba(0,0,0,.35);transition:background .2s,color .2s,transform .2s}
+  .back:hover,.back:focus-visible{background:var(--sand);color:#050505;outline:none}
+  .back span{transition:transform .2s}.back:hover span{transform:translateX(-3px)}
+  .corner.l i{left:3px}.corner.r i{right:3px}
+
+  /* school brand */
+  .brand{gap:12px}
+  .brand img{height:38px;width:auto;display:block}
+  .brand span{line-height:1.45}
+  .brand{position:absolute;top:30px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:3}
+  .brand svg{width:52px;height:52px}
+  .brand span{font:12px/1.7 "Consolas","Courier New",monospace;letter-spacing:.2em;color:var(--sand);text-transform:uppercase}
+  .brand span{line-height:1.45}
+  .brand::after{content:"";position:absolute;left:50%;bottom:-14px;width:62px;height:1px;background:var(--line);transform:translateX(-50%)}
+
+  /* centre copy */
+  .hero{position:absolute;left:50%;top:58%;transform:translate(-50%,-44%);text-align:center;width:min(720px,90%);z-index:3}
+  h1{font-weight:300;font-size:clamp(2.6rem,6.4vw,4.1rem);line-height:1.12;letter-spacing:-.01em}
+  .sub{margin-top:clamp(28px,6vh,56px);font-weight:300;font-size:clamp(1.5rem,3.2vw,2.1rem);color:var(--sand)}
+  .rule{width:min(430px,70%);height:1px;margin:14px auto 22px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+  .cta{
+    display:inline-block;padding:12px 30px;border:1px solid rgba(185,164,140,.45);border-radius:999px;
+    font:12px "Consolas","Courier New",monospace;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;
+    color:#e4b783;background:rgba(255,255,255,.03);transition:background .2s,border-color .2s,color .2s
+  }
+  .cta:hover,.cta:focus-visible{background:#e4b783;color:#050505;border-color:#e4b783;outline:none}
+
+  /* committee nodes */
+  .node{position:absolute;transform:translate(-50%,-50%);text-align:center;z-index:2}
+  .node a{display:block;text-decoration:none;color:inherit}
+  .emblem{width:var(--emb);height:var(--emb);margin:0 auto;border-radius:50%;padding:3px;
+    border:2px solid #d9c6ad;background:#06121c;box-shadow:0 0 0 3px rgba(0,0,0,.8),0 0 18px rgba(228,183,131,.15);
+    transition:box-shadow .25s,transform .25s}
+  .emblem svg{width:100%;height:100%;display:block;border-radius:50%}
+  .node a:hover .emblem,.node a:focus-visible .emblem{box-shadow:0 0 0 3px rgba(0,0,0,.8),0 0 26px rgba(228,183,131,.45);transform:scale(1.06)}
+  .node a:focus-visible{outline:none}
+  .label{display:block;margin-top:14px;font:12px "Consolas","Courier New",monospace;letter-spacing:.22em;color:var(--sand-dim)}
+
+
+  /* clickable committee animations */
+  .emblem img.logo{position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);object-fit:contain;padding:12%;border-radius:50%;background:radial-gradient(circle at 50% 30%,#fffdf8,#e6ddcf)}
+  .node a{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .emblem{position:relative}
+  .emblem svg,.emblem img.logo{transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+  .node a:hover .emblem svg,.node a:focus-visible .emblem svg,.node a:hover .emblem img.logo,.node a:focus-visible .emblem img.logo{transform:rotate(12deg) scale(1.05)}
+  .node a:hover .label,.node a:focus-visible .label,.node.open .label{color:#e4b783}
+  .emblem::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid #e4b783;opacity:0;pointer-events:none}
+  .node.pulse .emblem::after{animation:ripple .8s ease-out}
+  .node.pulse .emblem svg,.node.pulse .emblem img.logo{animation:spin .8s cubic-bezier(.3,1.3,.5,1)}
+  @keyframes ripple{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.1)}}
+  @keyframes spin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(.88)}100%{transform:rotate(360deg) scale(1)}}
+  .tip{position:absolute;top:calc(100% + 8px);left:50%;width:190px;padding:10px 12px;transform:translate(-50%,-6px);
+    background:rgba(10,10,10,.94);border:1px solid rgba(185,164,140,.5);border-radius:10px;
+    font:300 14px/1.4 "Segoe UI Light","Segoe UI",Arial,sans-serif;color:var(--ink);
+    opacity:0;visibility:hidden;transition:opacity .25s,transform .25s,visibility .25s}
+  .node:hover,.node:focus-within{z-index:5}
+  .node:hover .tip,.node:focus-within .tip{opacity:1;visibility:visible;transform:translate(-50%,0)}
+  .node.open{z-index:5}
+  .node.open .tip{opacity:1;visibility:visible;transform:translate(-50%,0)}
+  @media (prefers-reduced-motion:no-preference){
+    .emblem{animation:float 5s ease-in-out infinite}
+    .node:nth-child(2n) .emblem{animation-delay:-1.6s}
+    .node:nth-child(3n) .emblem{animation-delay:-3.2s}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  }
+  @media (prefers-reduced-motion:reduce){.node.pulse .emblem::after,.node.pulse .emblem svg,.node.pulse .emblem img.logo{animation:none}}
+
+  /* one entrance moment */
+  @media (prefers-reduced-motion:no-preference){
+    .circuit path{stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.2s ease-out .2s forwards}
+    @keyframes draw{to{stroke-dashoffset:0}}
+  }
+
+  /* mobile */
+  @media (max-width:800px){
+    .stage{display:flex;flex-direction:column;align-items:center;padding:150px 20px 48px;min-height:100vh}
+    .circuit,.corner{display:none}
+    .brand{position:absolute;top:64px}
+    .back{top:14px;left:14px;padding:8px 12px;font-size:11px;letter-spacing:.18em}
+    .hero{position:static;transform:none;margin-top:56px}
+    .nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 12px;margin-top:44px;width:100%;max-width:420px;order:3}
+    .node{position:static;transform:none}
+    .emblem{width:78px;height:78px}
+    .label{font-size:11px;letter-spacing:.16em}
+  }
+  @media (min-width:801px){.nodes{display:contents}}
+</style>
+</head>
+<body>
+<main class="stage">
+
+  <!-- Committee icons (original line icons; swap in official logos if you prefer) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="ic-who" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="37" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/><path d="M42 26h16v16h16v16H58v16H42V58H26V42h16z" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="ic-disec" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="30" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 32l7 12v16H43V44z" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M43 56l-6 8M57 56l6 8M29 71L71 29" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="ic-unhrc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><path d="M50 22v54M34 76h32M24 36h52" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 36l-9 22q9 9 18 0zM76 36l-9 22q9 9 18 0z" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><circle cx="50" cy="22" r="3" fill="#1b9be0"/></symbol>
+      <symbol id="ic-tnla" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><path d="M30 52a20 20 0 0 1 40 0" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 24v8M24 52h52M32 56v16M44 56v16M56 56v16M68 56v16M22 74h56" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="ic-unsc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><path d="M50 20l28 10v20c0 18-14 28-28 34-14-6-28-16-28-34V30z" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><polygon points="50,36 55,47 67,47 58,55 61,67 50,60 39,67 42,55 33,47 45,47" fill="#1b9be0"/></symbol>
+      <symbol id="ic-g20" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="35" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" stroke-dasharray="1 9.4"/><text x="50" y="58" text-anchor="middle" fill="#1b9be0" font-family="Arial,sans-serif" font-weight="700" font-size="24">G20</text></symbol>
+      <symbol id="ic-ecosoc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><path d="M24 74h52" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 74V62M44 74V50M60 74V40" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="9" stroke-linecap="butt"/><path d="M24 40l18-12 12 6 22-14M66 20h10v10" fill="none" stroke="#1b9be0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5"/></symbol>
+    
+      <symbol id="ic-who" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/><path d="M42 24h16v18h18v16H58v18H42V58H24V42h18z" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 50h12l5-9 8 18 5-9h22" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke="#6fc3f5" stroke-width="2.2"/></symbol>
+      <symbol id="ic-disec" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/><path d="M50 16L80 28V52C80 70 66 80 50 86 34 80 20 70 20 52V28Z" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 34v34M50 48c-8-2-12-8-12-14 8 2 12 6 12 14M50 58c8-2 12-8 12-14-8 2-12 6-12 14" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/></symbol>
+      <symbol id="ic-unhrc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/><circle cx="50" cy="28" r="8" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 38l24 10 24-10M50 48v18M50 66l-13 18M50 66l13 18" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="ic-tnla" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/><path d="M18 80h64M24 80V58h52v22M32 58c0-14 8-24 18-24s18 10 18 24M50 34v-10M38 80V64M50 80V64M62 80V64" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="ic-unsc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/><circle cx="50" cy="50" r="15" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="80.0" cy="50.0" r="3.4" fill="#1b9be0"/><circle cx="71.2" cy="71.2" r="3.4" fill="#1b9be0"/><circle cx="50.0" cy="80.0" r="3.4" fill="#1b9be0"/><circle cx="28.8" cy="71.2" r="3.4" fill="#1b9be0"/><circle cx="20.0" cy="50.0" r="3.4" fill="#1b9be0"/><circle cx="28.7" cy="28.8" r="3.4" fill="#1b9be0"/><circle cx="49.9" cy="20.0" r="3.4" fill="#1b9be0"/><circle cx="71.2" cy="28.7" r="3.4" fill="#1b9be0"/></symbol>
+      <symbol id="ic-ecosoc" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/><path d="M26 78V60M40 78V48M54 78V56M68 78V38" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/><path d="M22 44c14-2 26-12 34-26M44 18h12v12" fill="none" stroke="#1b9be0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke="#6fc3f5" stroke-width="2.4"/></symbol>
+      <symbol id="ic-g20" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0b2a44"/><circle cx="50" cy="50" r="42" fill="none" stroke="#1b9be0" stroke-opacity=".35" stroke-width="1.5"/><circle cx="86.0" cy="50.0" r="2" fill="#1b9be0"/><circle cx="79.1" cy="71.2" r="2" fill="#1b9be0"/><circle cx="61.1" cy="84.2" r="2" fill="#1b9be0"/><circle cx="38.9" cy="84.2" r="2" fill="#1b9be0"/><circle cx="20.9" cy="71.2" r="2" fill="#1b9be0"/><circle cx="14.0" cy="50.1" r="2" fill="#1b9be0"/><circle cx="20.8" cy="28.9" r="2" fill="#1b9be0"/><circle cx="38.8" cy="15.8" r="2" fill="#1b9be0"/><circle cx="61.0" cy="15.7" r="2" fill="#1b9be0"/><circle cx="79.1" cy="28.8" r="2" fill="#1b9be0"/><text x="50" y="58" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="26" fill="#1b9be0">G20</text></symbol>
+    </defs>
+  </svg>
+
+  <!-- circuit lines (drawn in a 1003 x 629 space) -->
+  <svg class="circuit" viewBox="0 0 1003 629" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M250 182 L200 140 L200 0"/>
+    <path d="M750 182 L797 138 L797 0"/>
+    <path d="M142 340 L95 292 L0 292"/>
+    <path d="M858 340 L903 292 L1003 292"/>
+    <path d="M142 545 L97 625"/>
+    <path d="M860 545 L905 625"/>
+  </svg>
+  <div class="corner l"><i></i></div>
+  <div class="corner r"><i></i></div>
+
+  <a class="back" href="links.html"><span aria-hidden="true">←</span> Go back</a>
+
+  <header class="brand">
+   <img src="hisk.logo.png" alt="Hindustan International School logo">
+    <span>Hindustan International<br>School - Karapakkam</span>
+  </header>
+
+  <section class="hero">
+    <h1>HIS Global<br>Conclave Edition 3</h1>
+    <p class="sub">Model United Nations</p>
+    <div class="rule"></div>
+    <a class="cta" href="https://docs.google.com/forms/d/1CwVhV4bqR6i7ZCGj-hjRgS0DV4maIo6OsQv2Tjlwe24/edit">Register now!</a>
+  </section>
+
+  <div class="nodes">
+    <div class="node" style="left:27.1%;top:33.4%"><a href="who.html"><div class="emblem"><svg><use href="#ic-who"/></svg><img class="logo" src="images/who.png" data-alt="who.png|WHO.png|images/WHO.png" alt="WHO logo" onerror="nx(this)"></div><span class="label">WHO</span></a><span class="tip" role="status">World Health Organization</span></div>
+    <div class="node" style="left:49.7%;top:27%"><a href="unsc.html"><div class="emblem"><svg><use href="#ic-unsc"/></svg><img class="logo" src="images/unsc.png" data-alt="unsc.png|UNSC.png|images/UNSC.png" alt="UNSC logo" onerror="nx(this)"></div><span class="label">UNSC</span></a><span class="tip" role="status">UN Security Council</span></div>
+    <div class="node" style="left:72.2%;top:33.4%"><a href="ecosoc.html"><div class="emblem"><svg><use href="#ic-ecosoc"/></svg><img class="logo" src="images/ecosoc.png" data-alt="ecosoc.png|ECOSOC.png|images/ECOSOC.png" alt="ECOSOC logo" onerror="nx(this)"></div><span class="label">ECOSOC</span></a><span class="tip" role="status">Economic and Social Council</span></div>
+    <div class="node" style="left:16.9%;top:57.6%"><a href="disec.html#disec"><div class="emblem"><svg><use href="#ic-disec"/></svg><img class="logo" src="images/disec.png" data-alt="disec.png|DISEC.png|images/DISEC.png" alt="DISEC logo" onerror="nx(this)"></div><span class="label">DISEC</span></a><span class="tip" role="status">Disarmament and International Security Committee</span></div>
+    <div class="node" style="left:82.5%;top:57.6%"><a href="unhrc.html"><div class="emblem"><svg><use href="#ic-unhrc"/></svg><img class="logo" src="images/unhrc.png" data-alt="unhrc.png|UNHRC.png|images/UNHRC.png" alt="UNHRC logo" onerror="nx(this)"></div><span class="label">UNHRC</span></a><span class="tip" role="status">UN Human Rights Council</span></div>
+    <div class="node" style="left:16.9%;top:88%"><a href="tnla.html"><div class="emblem"><svg><use href="#ic-tnla"/></svg><img class="logo" src="images/tnla.png" data-alt="tnla.png|TNLA.png|images/TNLA.png" alt="TNLA logo" onerror="nx(this)"></div><span class="label">TNLA</span></a><span class="tip" role="status">Tamil Nadu Legislative Assembly</span></div>
+    <div class="node" style="left:82.5%;top:88%"><a href="g20.html"><div class="emblem"><svg><use href="#ic-g20"/></svg><img class="logo" src="images/g20.png" data-alt="g20.png|G20.png|images/G20.png" alt="G20 logo" onerror="nx(this)"></div><span class="label">G20</span></a><span class="tip" role="status">Group of Twenty</span></div>
+  </div>
+
+</main>
+<script>
+function nx(i){var l=(i.dataset.alt||'').split('|').filter(Boolean);if(l.length){i.src=l.shift();i.dataset.alt=l.join('|')}else{i.remove()}}
+document.querySelectorAll(".node a").forEach(function(a){
+  a.addEventListener("click",function(e){
+    if(e.metaKey||e.ctrlKey||e.shiftKey||e.button===1)return;
+    e.preventDefault();
+    var n=a.closest(".node");
+    n.classList.remove("pulse");void n.offsetWidth;n.classList.add("pulse","open");
+    var still=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
+    setTimeout(function(){location.href=a.href},still?0:450);
+  });
+});
+window.addEventListener("pageshow",function(){document.querySelectorAll(".node").forEach(function(n){n.classList.remove("pulse","open")})});
+</script>
+</body>
+</html>
