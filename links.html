@@ -105,20 +105,20 @@
 
   <nav class="links">
     <a class="row" href="https://www.instagram.com/reel/DCrPtfVSRZH/?utm_source=ig_web_copy_link" target="_blank" rel="noopener">
-      <b>Glimpses of HIS GLOBAL CONCLAVE: EDITION 2</b>
+      <b>Glimpses of HIS GLOBAL CONCLAVE</b>
       <button class="dots" aria-label="Copy link"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
     </a>
     <a class="row" href="index.html" target="_blank" rel="noopener">
       <b>Registration and Background Guide</b>
       <button class="dots" aria-label="Copy link"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
     </a>
-    <a class="row" href="https://tr.ee/Z1TxQA" target="_blank" rel="noopener">
+    <a class="row" href="https://tr.ee/Z1TxQA" data-doc="brochure">
       <span class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span>
       <span><b>Brochure</b><small>PDF · 4 pages</small></span>
       <button class="dots" aria-label="Copy link"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
     </a>
 
-    <a class="row" href="https://tr.ee/I54hYK" target="_blank" rel="noopener">
+    <a class="row" href="https://tr.ee/I54hYK" data-doc="poster">
       <span class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 17l-5-5-9 8"/></svg></span>
       <span><b>Poster</b><small>PDF · 1 page</small></span>
       <button class="dots" aria-label="Copy link"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
@@ -131,7 +131,7 @@
   <div class="vpanel">
     <div class="vbar">
       <h3 id="vtitle">Document</h3>
-      <a class="vbtn" id="vdl" download>Download</a>
+      <a class="vbtn" id="vdl" target="_blank" rel="noopener">Open</a>
       <button class="vbtn" id="vclose" aria-label="Close">Close</button>
     </div>
     <iframe class="vframe" id="vframe" title="Document viewer"></iframe>
@@ -140,7 +140,7 @@
 <div class="toast" id="toast" role="status">Link copied</div>
 
 <script>
-var DOCS={};
+var DOCS={brochure:{title:"Brochure",url:"https://ugc.production.linktr.ee/90a67b50-c526-47fa-ac9a-d43be6c99458_HIS-GLOBAL-CONCLAVE-2026--1---2-.pdf"},poster:{title:"Poster",url:"https://ugc.production.linktr.ee/71c3fc35-699b-43f2-91b9-53ddbe97ad29_IMG-20261028-WA0004.pdf"}};
 </script>
 <script>
 var root=document.documentElement,toast=document.getElementById("toast"),t;
@@ -159,18 +159,14 @@ document.querySelectorAll(".dots").forEach(function(b){
   });
 });
 
-var urls={},ov=document.getElementById("viewer"),vf=document.getElementById("vframe");
-function docUrl(k){
-  if(!urls[k]){var b=atob(DOCS[k].b64),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);
-    urls[k]=URL.createObjectURL(new Blob([a],{type:"application/pdf"}))}
-  return urls[k]
-}
+var ov=document.getElementById("viewer"),vf=document.getElementById("vframe");
+var mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+function docUrl(k){return mobile?"https://docs.google.com/gview?embedded=1&url="+encodeURIComponent(DOCS[k].url):DOCS[k].url+"#navpanes=0"}
 function openDoc(k){
   if(!DOCS[k])return;
-  var u=docUrl(k);
-  vf.src=u+"#navpanes=0";
+  vf.src=docUrl(k);
   document.getElementById("vtitle").textContent=DOCS[k].title;
-  var d=document.getElementById("vdl");d.href=u;d.setAttribute("download",DOCS[k].file);
+  var d=document.getElementById("vdl");d.href=DOCS[k].url;
   ov.classList.add("open");document.body.style.overflow="hidden";
   try{history.replaceState(null,"","#"+k)}catch(e){}
 }
