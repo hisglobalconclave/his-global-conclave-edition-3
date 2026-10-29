@@ -91,10 +91,6 @@
 <body>
 <main class="card">
 
-  <button class="ibtn" id="share" aria-label="Share this page">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l8 8h-3v8H7v-8H4z"/></svg>
-  </button>
-
   <div class="avatar">
     <img src="hisk.logo.png" alt="HIS Global Conclave logo" onerror="this.remove()">
   </div>
@@ -105,7 +101,7 @@
 
   <nav class="links">
     <a class="row" href="https://www.instagram.com/reel/DCrPtfVSRZH/?utm_source=ig_web_copy_link" target="_blank" rel="noopener">
-      <b>Glimpses of HIS GLOBAL CONCLAVE</b>
+      <b>Glimpses of HIS GLOBAL CONCLAVE: EDITION 2</b>
       <button class="dots" aria-label="Copy link"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
     </a>
     <a class="row" href="index.html" target="_blank" rel="noopener">
@@ -149,9 +145,6 @@ function copy(text){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){say("Link copied")},function(){say("Couldn’t copy")})}
   else say("Couldn’t copy")
 }
-document.getElementById("share").onclick=function(){
-  if(navigator.share){navigator.share({title:document.title,url:location.href}).catch(function(){})}else copy(location.href)
-};
 document.querySelectorAll(".dots").forEach(function(b){
   b.addEventListener("click",function(e){
     e.preventDefault();e.stopPropagation();
