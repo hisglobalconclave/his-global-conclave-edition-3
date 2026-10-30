@@ -46,12 +46,11 @@
 
   .board{display:flex;flex-direction:column;gap:30px;margin-top:34px;align-items:flex-start}
   .member{width:134px;text-align:center}
-  .photo{position:relative;width:134px;height:134px;border-radius:6px;overflow:hidden;background:#101820;border:1px solid rgba(185,164,140,.25);transition:transform .3s,box-shadow .3s}
-  .photo::after{content:"";position:absolute;top:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue)}
-  .member:hover .photo{transform:translateY(-4px);box-shadow:0 10px 26px rgba(27,155,224,.2)}
+  .photo{position:relative;width:134px;height:134px;border-radius:6px;overflow:hidden;background:#101820;border:1px solid rgba(185,164,140,.25);}
   .photo svg{position:absolute;inset:0;width:100%;height:100%}
   .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .role{margin-top:12px;font-size:.78rem;font-weight:600}
+  .pos{margin-top:3px;font-size:.68rem;font-weight:400;color:var(--dim)}
 
   .switch{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:36px}
   .switch a{padding:6px 12px;border:1px solid rgba(185,164,140,.25);border-radius:999px;font:11px var(--mono);letter-spacing:.15em;color:var(--dim);text-decoration:none;transition:all .2s}
@@ -138,6 +137,7 @@ function pdfUrl(){
   return blobUrl
 }
 var ROLES=["Chairperson","Vice-Chairperson"];
+var NAMES=["Akhil","Priyadharshini Panneerselvam"];
 function nx(i){var l=(i.dataset.alt||"").split("|").filter(Boolean);if(l.length){i.src=l.shift();i.dataset.alt=l.join("|")}else i.remove()}
 function $(id){return document.getElementById(id)}
 function render(){
@@ -149,7 +149,7 @@ function render(){
   $("agenda").innerHTML='<p class="topic"><b>Agenda:</b>'+AG[k]+'</p>';
   var u=pdfUrl();$("pdf").src=u+"#toolbar=0&navpanes=0";$("openpdf").href=u;$("dl").href=u;$("dl").setAttribute("download","ECOSOC-Background-Guide.pdf");$("note").textContent="Loading background guide…";
   $("board").innerHTML=ROLES.map(function(r,i){
-    return '<div class="member"><div class="photo"><svg><use href="#person"/></svg><img src="board/'+k+'-'+(i+1)+'.jpg" alt="'+r+'" onerror="this.remove()"></div><div class="role">'+r+'</div></div>'
+    return '<div class="member"><div class="photo"><svg><use href="#person"/></svg><img src="board/'+k+'-'+(i+1)+'.jpg" alt="'+NAMES[i]+'" onerror="this.remove()"></div><div class="role">'+NAMES[i]+'</div><div class="pos">'+r+'</div></div>'
   }).join("");
   $("switch").innerHTML=Object.keys(C).map(function(x){return '<a href="'+x+'.html"'+(x===k?' class="on"':'')+'>'+C[x].n+'</a>'}).join("");
 }
